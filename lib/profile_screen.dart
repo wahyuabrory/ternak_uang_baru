@@ -55,6 +55,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
+        backgroundColor:
+            Colors.lightBlueAccent, // Ubah warna latar belakang AppBar
         automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
@@ -69,20 +71,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor:
-                        Colors.grey[300], // Warna latar belakang avatar
-                  ),
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: Icon(Icons.person,
-                        size: 100, color: Colors.white.withOpacity(0.7)),
-                  ),
-                ],
+              CircleAvatar(
+                radius: 70,
+                backgroundColor:
+                    Colors.grey[300], // Warna latar belakang avatar
+                child: Icon(
+                  Icons.person,
+                  size: 100,
+                  color: Colors.white.withOpacity(0.7),
+                ),
               ),
               SizedBox(height: 20),
               Text(
@@ -98,6 +95,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ElevatedButton(
                 onPressed: _resetPassword,
                 child: Text('Reset Password'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightBlueAccent, // Ubah warna tombol
+                  foregroundColor: Colors.white, // Ubah warna teks pada tombol
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(20), // Ubah bentuk tombol
+                  ),
+                ),
               ),
               SizedBox(height: 20),
               _buildAccordion(),
