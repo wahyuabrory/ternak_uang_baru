@@ -4,12 +4,29 @@ import 'chat_screen.dart';
 import 'module_education_page.dart';
 import '../profile_screen.dart';
 
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
+void main() {
+  runApp(MyHomePage());
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MyApp',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Home(),
+    );
+  }
+}
+
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [

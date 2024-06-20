@@ -71,6 +71,15 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/placeholder.jpg
+    - images/modul1.jpg
+    - images/modul2.jpg
+    - images/modul3.jpg
+    - images/modul4.jpg
+
+    - videos/modul1.mp4
+    - videos/modul2.mp4
+    - videos/modul3.mp4
+    - videos/modul4.mp4
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
