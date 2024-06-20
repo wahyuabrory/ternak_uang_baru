@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:login_ternak_uang/user/MyHomePage.dart';
-import 'user/login_screen.dart';
-import 'profile_screen.dart';
+import 'login_screen.dart';
+import '../user/profile_screen.dart';
 
 class AuthState extends StatelessWidget {
   @override

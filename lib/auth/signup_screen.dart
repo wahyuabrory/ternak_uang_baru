@@ -86,7 +86,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/logo.png', // Your logo path
+                        'images/logo.png', // Your logo path
                         height: 100,
                       ),
                       SizedBox(height: 16),

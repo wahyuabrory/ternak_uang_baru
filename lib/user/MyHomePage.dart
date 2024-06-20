@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'WatchlistPage.dart';
-import 'chat_screen.dart';
-import 'module_education_page.dart';
-import '../profile_screen.dart';
+import '../utils/WatchlistPage.dart';
+import '../utils/chat_screen.dart';
+import '../utils/module_education_page.dart';
+import 'profile_screen.dart';
 
 void main() {
   runApp(MyHomePage());

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'StockData.dart';
+import '../user/StockData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'stocks_card.dart';
 
 class WatchlistPage extends StatefulWidget {
   const WatchlistPage({super.key});
@@ -108,6 +107,11 @@ class _WatchlistPageState extends State<WatchlistPage> {
                       return StockCard(
                         key: ValueKey(index),
                         stock: data[index],
+                        onDelete: () async {
+                          stocksIncluded.removeAt(index);
+                          await saveList(stocksIncluded);
+                          setState(() {});
+                        },
                       );
                     },
                     onReorder: (oldIndex, newIndex) async {
@@ -127,6 +131,58 @@ class _WatchlistPageState extends State<WatchlistPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class StockCard extends StatelessWidget {
+  final StockData stock;
+  final VoidCallback onDelete;
+
+  const StockCard(
+      {required Key key, required this.stock, required this.onDelete})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(10),
+        leading:
+            Icon(Icons.show_chart, color: Colors.lightBlueAccent, size: 40),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            Text("Symbol: ${stock.symbol}",
+                style: const TextStyle(fontSize: 20)),
+            Text("Open: \Rp${stock.open.toStringAsFixed(2)}",
+                style: const TextStyle(fontSize: 20)),
+            Text("High: \Rp${stock.high.toStringAsFixed(2)}",
+                style: const TextStyle(fontSize: 20)),
+            Text("Low: \Rp${stock.low.toStringAsFixed(2)}",
+                style: const TextStyle(fontSize: 20)),
+            Text("Close: \Rp${stock.close.toStringAsFixed(2)}",
+                style: const TextStyle(fontSize: 20)),
+            Text("Volume: ${stock.volume}",
+                style: const TextStyle(fontSize: 20)),
+            Text("Change: \Rp${stock.change.toStringAsFixed(2)}",
+                style: const TextStyle(fontSize: 20)),
+            Text(
+              "Change Percentage: ${stock.changePct}%",
+              style: TextStyle(
+                color: stock.changePct > 0 ? Colors.green : Colors.red,
+                fontSize: 20,
+              ),
+            ),
+          ],
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete, color: Colors.red),
+          onPressed: onDelete,
+        ),
       ),
     );
   }

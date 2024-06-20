@@ -71,5 +71,4 @@ class DefaultFirebaseOptions {
     authDomain: 'ternak-uang-3adfc.firebaseapp.com',
     storageBucket: 'ternak-uang-3adfc.appspot.com',
   );
-
 }

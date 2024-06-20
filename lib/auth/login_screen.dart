@@ -62,12 +62,12 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Image.asset(
-                  'assets/logo.png', // Path to your logo asset
+                  'images/logo.png', // Path to your logo asset
                   height: 100,
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Welcome Back!',
+                  'Ternak Uang!',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

@@ -35,7 +35,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Image.asset(
-                'assets/logo.png', // Path to your logo asset
+                'images/logo.png', // Path to your logo asset
                 height: 100,
               ),
               SizedBox(height: 16),

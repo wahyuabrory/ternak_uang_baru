@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:login_ternak_uang/user/login_screen.dart';
-import 'auth_state.dart';
+import 'package:login_ternak_uang/auth/login_screen.dart';
+import 'auth/auth_state.dart';
 import 'package:firebase_core/firebase_core.dart';
-import '../firebase_options.dart';
+import 'auth/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
