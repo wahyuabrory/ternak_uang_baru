@@ -11,40 +11,47 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  User? _user;
-  String? _username;
+  User? _user; // Untuk menyimpan informasi pengguna yang saat ini masuk
+  String?
+      _username; // Untuk menyimpan username pengguna yang diambil dari Firestore
 
   @override
   void initState() {
     super.initState();
-    _user = _auth.currentUser;
-    _loadUserData();
+    _user = _auth.currentUser; // Mendapatkan pengguna yang saat ini masuk
+    _loadUserData(); // Memuat data pengguna dari Firestore saat inisialisasi
   }
 
   Future<void> _loadUserData() async {
     if (_user != null) {
+      // Mengambil dokumen pengguna dari Firestore berdasarkan UID
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(_user!.uid).get();
       setState(() {
-        _username = userDoc['username'];
+        _username =
+            userDoc['username']; // Mengambil username dari dokumen pengguna
       });
     }
   }
 
   void _logout(BuildContext context) async {
-    await _auth.signOut();
+    await _auth.signOut(); // Proses logout dari Firebase Auth
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(
+          builder: (context) =>
+              LoginScreen()), // Navigasi ke halaman login setelah logout
     );
   }
 
   void _resetPassword() async {
     if (_user != null) {
-      await _auth.sendPasswordResetEmail(email: _user!.email!);
+      await _auth.sendPasswordResetEmail(
+          email: _user!.email!); // Mengirim email reset password
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Password reset email sent'),
+          content: Text(
+              'Password reset email sent'), // Menampilkan snackbar ketika email reset terkirim
         ),
       );
     }
@@ -55,13 +62,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
-        backgroundColor:
-            Colors.lightBlueAccent, // Ubah warna latar belakang AppBar
-        automaticallyImplyLeading: false,
+        backgroundColor: Colors.lightBlueAccent, // Warna latar belakang AppBar
+        automaticallyImplyLeading:
+            false, // Tidak menampilkan tombol back secara otomatis
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () => _logout(context),
+            onPressed: () => _logout(context), // Tombol logout di AppBar
           ),
         ],
       ),
@@ -83,12 +90,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SizedBox(height: 20),
               Text(
-                _username ?? 'Loading...',
+                _username ??
+                    'Loading...', // Nama pengguna atau 'Loading...' jika belum dimuat
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
-                _user?.email ?? 'Email',
+                _user?.email ??
+                    'Email', // Email pengguna atau 'Email' jika tidak ada
                 style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
               SizedBox(height: 20),
@@ -96,16 +105,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: _resetPassword,
                 child: Text('Reset Password'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightBlueAccent, // Ubah warna tombol
-                  foregroundColor: Colors.white, // Ubah warna teks pada tombol
+                  backgroundColor: Colors.lightBlueAccent, // Warna tombol
+                  foregroundColor: Colors.white, // Warna teks pada tombol
                   shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20), // Ubah bentuk tombol
+                    borderRadius: BorderRadius.circular(20), // Bentuk tombol
                   ),
                 ),
               ),
               SizedBox(height: 20),
-              _buildAccordion(),
+              _buildAccordion(), // Widget untuk daftar expansion tile (accordion)
             ],
           ),
         ),
@@ -118,12 +126,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: ListView(
         children: <Widget>[
           _buildExpansionTile(
-            'About Us',
-            'This is a stock trading app that allows users to trade stocks, track their portfolio, and stay updated with market news. Our mission is to make stock trading accessible and easy for everyone.',
+            'About Us', // Judul expansion tile
+            'This is a stock trading app that allows users to trade stocks, track their portfolio, and stay updated with market news. Our mission is to make stock trading accessible and easy for everyone.', // Konten expansion tile
           ),
           _buildExpansionTile(
-            'FAQ',
-            'Q: How do I start trading?\nA: To start trading, you need to create an account, verify your email, and then you can begin adding funds to your account and start trading.\n\nQ: How secure is this app?\nA: We use the latest security measures to ensure your data and transactions are safe and secure.',
+            'FAQ', // Judul expansion tile
+            'Q: How do I start trading?\nA: To start trading, you need to create an account, verify your email, and then you can begin adding funds to your account and start trading.\n\nQ: How secure is this app?\nA: We use the latest security measures to ensure your data and transactions are safe and secure.', // Konten expansion tile
           ),
         ],
       ),
@@ -132,11 +140,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildExpansionTile(String title, String content) {
     return ExpansionTile(
-      title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Text(title,
+          style:
+              TextStyle(fontWeight: FontWeight.bold)), // Judul expansion tile
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(content, style: TextStyle(fontSize: 16)),
+          child: Text(content,
+              style: TextStyle(fontSize: 16)), // Konten expansion tile
         ),
       ],
     );

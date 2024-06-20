@@ -1,35 +1,43 @@
+// Mengimpor paket-paket yang diperlukan untuk membangun aplikasi Flutter dan menggunakan Firebase Authentication.
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+// Mengimpor halaman-halaman lain yang akan digunakan.
 import 'package:login_ternak_uang/user/MyHomePage.dart';
 import 'forgot_password_screen.dart';
 import 'signup_screen.dart';
 
+// Mendefinisikan kelas LoginScreen yang merupakan StatefulWidget.
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+// State kelas untuk LoginScreen.
 class _LoginScreenState extends State<LoginScreen> {
+  // Mendefinisikan instance FirebaseAuth.
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Controller untuk mengelola input email dan password dari pengguna.
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  // Metode untuk login menggunakan email dan password.
   void _login() async {
     try {
+      // Mencoba untuk login menggunakan email dan password yang diberikan.
       await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
 
-      // Navigate to the main screen
+      // Navigasi ke halaman utama jika login berhasil.
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MyHomePage()),
       );
     } catch (e) {
-      // Handle error
+      // Menangani kesalahan jika login gagal.
       print(e);
-      // Show error message
+      // Menampilkan pesan kesalahan menggunakan dialog.
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -52,20 +60,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Mengembalikan widget Scaffold yang merupakan struktur dasar halaman.
     return Scaffold(
+      // Menetapkan warna latar belakang.
       backgroundColor: Colors.lightBlueAccent,
+      // Menggunakan Container untuk memberikan padding di sekitar konten.
       body: Container(
         padding: EdgeInsets.all(16.0),
+        // Menggunakan Center untuk memusatkan konten secara vertikal dan horizontal.
         child: Center(
+          // Menggunakan SingleChildScrollView untuk memungkinkan scroll jika konten melebihi layar.
           child: SingleChildScrollView(
+            // Menggunakan Column untuk menata widget secara vertikal.
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                // Menampilkan logo aplikasi.
                 Image.asset(
                   'images/logo.png', // Path to your logo asset
                   height: 100,
                 ),
                 SizedBox(height: 16),
+                // Menampilkan teks "Ternak Uang!".
                 Text(
                   'Ternak Uang!',
                   style: TextStyle(
@@ -75,6 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 16),
+                // Menggunakan Card untuk membuat tampilan input lebih menarik.
                 Card(
                   color: Colors.white,
                   child: Padding(
@@ -82,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
+                        // TextField untuk input email.
                         TextField(
                           controller: _emailController,
                           decoration: InputDecoration(
@@ -91,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         SizedBox(height: 12),
+                        // TextField untuk input password.
                         TextField(
                           controller: _passwordController,
                           decoration: InputDecoration(
@@ -101,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: true,
                         ),
                         SizedBox(height: 20),
+                        // Tombol untuk login.
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -121,9 +141,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         SizedBox(height: 12),
+                        // Baris untuk tombol "Forgot Password?" dan "Signup".
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
+                            // Tombol untuk navigasi ke layar lupa kata sandi.
                             TextButton(
                               onPressed: () {
                                 Navigator.push(
@@ -139,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 style: TextStyle(color: Colors.blue),
                               ),
                             ),
+                            // Tombol untuk navigasi ke layar pendaftaran.
                             TextButton(
                               onPressed: () {
                                 Navigator.push(

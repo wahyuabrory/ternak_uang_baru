@@ -1,49 +1,57 @@
+// Mengimpor paket-paket yang diperlukan untuk membangun aplikasi Flutter dan menggunakan Firebase Authentication dan Firestore.
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+// Mengimpor halaman utama aplikasi.
 import 'package:login_ternak_uang/user/MyHomePage.dart';
 
+// Mendefinisikan kelas SignupScreen yang merupakan StatefulWidget.
 class SignupScreen extends StatefulWidget {
   @override
   _SignupScreenState createState() => _SignupScreenState();
 }
 
+// State kelas untuk SignupScreen.
 class _SignupScreenState extends State<SignupScreen> {
+  // Mendefinisikan instance FirebaseAuth dan Firestore.
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Controller untuk mengelola input email, password, dan username dari pengguna.
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
 
+  // Metode untuk mendaftar menggunakan email, password, dan username.
   void _signup() async {
     try {
+      // Mencoba untuk mendaftar menggunakan email dan password yang diberikan.
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
 
-      // Save user data to Firestore
+      // Menyimpan data pengguna ke Firestore.
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'username': _usernameController.text,
         'email': _emailController.text,
       });
 
-      // Show success snack bar
+      // Menampilkan pesan sukses menggunakan snackbar.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Signup Successful'),
         ),
       );
 
-      // Navigate to main screen
+      // Navigasi ke halaman utama jika pendaftaran berhasil.
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MyHomePage()),
       );
     } catch (e) {
       print('Error during signup: $e');
-      // Show error dialog
+      // Menampilkan pesan kesalahan menggunakan dialog.
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -53,7 +61,7 @@ class _SignupScreenState extends State<SignupScreen> {
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop(); // Menutup dialog
                 },
                 child: Text('OK'),
               ),
@@ -66,6 +74,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Mengembalikan widget Scaffold yang merupakan struktur dasar halaman.
     return Scaffold(
       appBar: AppBar(
         title: Text('Signup'),
@@ -74,7 +83,8 @@ class _SignupScreenState extends State<SignupScreen> {
       body: Container(
         decoration: BoxDecoration(
           color: Colors.lightBlueAccent,
-          borderRadius: BorderRadius.circular(20), // Border radius here
+          borderRadius:
+              BorderRadius.circular(20), // Border radius untuk kontainer
         ),
         child: Center(
           child: SingleChildScrollView(
@@ -86,7 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   Column(
                     children: [
                       Image.asset(
-                        'images/logo.png', // Your logo path
+                        'images/logo.png', // Path to your logo asset
                         height: 100,
                       ),
                       SizedBox(height: 16),
@@ -101,11 +111,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       SizedBox(height: 32),
                     ],
                   ),
+                  // Container untuk input username dengan dekorasi.
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(
-                          10), // Border radius for each input field
+                          10), // Border radius untuk setiap input field
                     ),
                     margin: EdgeInsets.symmetric(vertical: 8),
                     child: Padding(
@@ -121,11 +132,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                   ),
+                  // Container untuk input email dengan dekorasi.
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(
-                          10), // Border radius for each input field
+                          10), // Border radius untuk setiap input field
                     ),
                     margin: EdgeInsets.symmetric(vertical: 8),
                     child: Padding(
@@ -141,11 +153,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                   ),
+                  // Container untuk input password dengan dekorasi.
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(
-                          10), // Border radius for each input field
+                          10), // Border radius untuk setiap input field
                     ),
                     margin: EdgeInsets.symmetric(vertical: 8),
                     child: Padding(
@@ -163,6 +176,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
+                  // Tombol untuk mendaftar.
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -175,10 +189,11 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white, // White background color
+                        backgroundColor:
+                            Colors.white, // Warna background putih untuk tombol
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
-                              10), // Border radius for the button
+                              10), // Border radius untuk tombol
                         ),
                       ),
                     ),

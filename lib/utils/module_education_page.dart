@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+// Class untuk halaman utama yang menggunakan MaterialApp
 class ModuleEducationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -9,12 +10,15 @@ class ModuleEducationPage extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: VideoListScreen(),
+      home:
+          VideoListScreen(), // Menetapkan VideoListScreen sebagai halaman utama
     );
   }
 }
 
+// Class untuk menampilkan daftar video dalam bentuk list
 class VideoListScreen extends StatelessWidget {
+  // Daftar video yang akan ditampilkan
   final List<Map<String, String>> videos = [
     {
       'title': 'Saham 101',
@@ -29,13 +33,13 @@ class VideoListScreen extends StatelessWidget {
       'thumbnail': 'images/modul2.jpg'
     },
     {
-      'title': 'Behavior and Tradional Finance',
+      'title': 'Behavior and Traditional Finance',
       'category': 'Personal Finance',
       'path': 'videos/modul3.mp4',
       'thumbnail': 'images/modul3.jpg'
     },
     {
-      'title': 'Behavior and Tradional Finance',
+      'title': 'Behavior and Traditional Finance',
       'category': 'Personal Finance',
       'path': 'videos/modul4.mp4',
       'thumbnail': 'images/modul4.jpg'
@@ -46,11 +50,12 @@ class VideoListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Modul Finansial'),
+        title: Text('Modul Finansial'), // Judul AppBar
       ),
       body: ListView.builder(
         itemCount: videos.length,
         itemBuilder: (context, index) {
+          // Membuat VideoCard untuk setiap video dalam daftar
           return VideoCard(
             title: videos[index]['title']!,
             category: videos[index]['category']!,
@@ -63,11 +68,12 @@ class VideoListScreen extends StatelessWidget {
   }
 }
 
+// Widget untuk menampilkan detail kartu video
 class VideoCard extends StatelessWidget {
-  final String title;
-  final String category;
-  final String videoPath;
-  final String thumbnailPath;
+  final String title; // Judul video
+  final String category; // Kategori video
+  final String videoPath; // Path video
+  final String thumbnailPath; // Path thumbnail video
 
   VideoCard({
     required this.title,
@@ -79,14 +85,17 @@ class VideoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      margin: EdgeInsets.all(10.0),
-      elevation: 5,
+      color: Colors.white, // Warna latar belakang kartu
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0)), // Bentuk kartu
+      margin: EdgeInsets.all(10.0), // Margin dari kartu
+      elevation: 5, // Tinggi elevasi kartu
       child: Stack(
         children: [
+          // Stack untuk menumpuk thumbnail dan overlay
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+            borderRadius: BorderRadius.vertical(
+                top: Radius.circular(10.0)), // Melengkungkan sudut atas
             child: Image.asset(
               thumbnailPath,
               width: double.infinity,
@@ -98,7 +107,8 @@ class VideoCard extends StatelessWidget {
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(10.0)), // Melengkungkan sudut atas
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -117,6 +127,7 @@ class VideoCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Judul video
                       Text(
                         title,
                         style: TextStyle(
@@ -126,6 +137,7 @@ class VideoCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 5),
+                      // Kategori video
                       Text(
                         category,
                         style: TextStyle(
@@ -136,6 +148,7 @@ class VideoCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                // Tombol untuk memutar video
                 ButtonBar(
                   alignment: MainAxisAlignment.start,
                   children: [
@@ -143,6 +156,7 @@ class VideoCard extends StatelessWidget {
                       icon: Icon(Icons.play_arrow),
                       color: Colors.white,
                       onPressed: () {
+                        // Navigasi ke halaman pemutar video ketika tombol ditekan
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -163,8 +177,9 @@ class VideoCard extends StatelessWidget {
   }
 }
 
+// Halaman untuk memutar video
 class VideoPlayerScreen extends StatefulWidget {
-  final String videoPath;
+  final String videoPath; // Path video yang akan diputar
 
   VideoPlayerScreen({required this.videoPath});
 
@@ -173,40 +188,44 @@ class VideoPlayerScreen extends StatefulWidget {
 }
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  late VideoPlayerController _controller;
+  late VideoPlayerController _controller; // Kontroller untuk pemutar video
 
   @override
   void initState() {
     super.initState();
+    // Inisialisasi VideoPlayerController dengan video dari asset
     _controller = VideoPlayerController.asset(widget.videoPath)
-      ..setLooping(true)
+      ..setLooping(true) // Mengatur agar video diulang-ulang
       ..initialize().then((_) {
         setState(() {});
-        _controller.play();
+        _controller.play(); // Memulai pemutaran video
       });
     _controller.addListener(() {
-      setState(() {}); // Update the state to reflect the current position
+      setState(() {}); // Memperbarui state untuk merefleksikan posisi saat ini
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.dispose(); // Membebaskan sumber daya VideoPlayerController
     super.dispose();
   }
 
+  // Fungsi untuk memutar mundur video sebanyak 15 detik
   void _rewind() {
     final newPosition = _controller.value.position - Duration(seconds: 15);
     _controller
         .seekTo(newPosition >= Duration.zero ? newPosition : Duration.zero);
   }
 
+  // Fungsi untuk maju mundur video sebanyak 15 detik
   void _forward() {
     final newPosition = _controller.value.position + Duration(seconds: 15);
     final endPosition = _controller.value.duration;
     _controller.seekTo(newPosition <= endPosition ? newPosition : endPosition);
   }
 
+  // Fungsi untuk mengubah durasi menjadi format menit:detik
   String _formatDuration(Duration duration) {
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
@@ -217,7 +236,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Modul Finansial'),
+        title: Text('Modul Finansial'), // Judul AppBar
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -226,21 +245,23 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             child: _controller.value.isInitialized
                 ? AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
-                    child: VideoPlayer(_controller),
+                    child: VideoPlayer(_controller), // Memainkan video
                   )
-                : CircularProgressIndicator(),
+                : CircularProgressIndicator(), // Indikator progress saat video sedang dimuat
           ),
-          VideoProgressIndicator(_controller, allowScrubbing: true),
+          VideoProgressIndicator(_controller,
+              allowScrubbing: true), // Indikator progress video
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.replay_10),
+                icon: Icon(Icons.replay_10), // Tombol mundur 10 detik
                 onPressed: _rewind,
               ),
               IconButton(
                 icon: Icon(_controller.value.isPlaying
-                    ? Icons.pause
+                    ? Icons
+                        .pause // Tombol jeda jika video sedang diputar atau tombol putar jika tidak
                     : Icons.play_arrow),
                 onPressed: () {
                   setState(() {
@@ -251,14 +272,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.forward_10),
+                icon: Icon(Icons.forward_10), // Tombol maju 10 detik
                 onPressed: _forward,
               ),
             ],
           ),
           Text(
             '${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}',
-          ),
+          ), // Durasi video yang sedang diputar
         ],
       ),
     );

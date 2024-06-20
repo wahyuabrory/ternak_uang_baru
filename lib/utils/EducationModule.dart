@@ -1,16 +1,14 @@
-// education_module.dart
-
 class EducationModule {
-  final String title;
-  final String description;
-  final String videoUrl;
-  final String thumbnail;
+  final String title; // Judul dari modul pendidikan.
+  final String description; // Deskripsi atau konten dari modul pendidikan.
+  final String videoUrl; // URL video yang terkait dengan modul ini.
+  final String thumbnail; // URL thumbnail untuk video modul ini.
 
+  // Konstruktor untuk inisialisasi objek EducationModule.
   EducationModule({
-    required this.title,
-    required this.description,
-    required this.videoUrl,
-    required this.thumbnail,
+    required this.title, // Parameter wajib untuk judul.
+    required this.description, // Parameter wajib untuk deskripsi.
+    required this.videoUrl, // Parameter wajib untuk URL video.
+    required this.thumbnail, // Parameter wajib untuk URL thumbnail.
   });
 }
-  
