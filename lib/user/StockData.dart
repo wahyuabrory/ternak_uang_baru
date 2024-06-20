@@ -1,6 +1,3 @@
-// stock_data.dart
-
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -36,6 +33,9 @@ class StockData {
 
   factory StockData.fromJson(Map<String, dynamic> json) {
     var result = json['data']['results'][0];
+    String logoUrl = result['company']['logo'] ?? '';
+    logoUrl = logoUrl.replaceAll(r'\/', '/');
+
     return StockData(
       symbol: result['symbol'] ?? '',
       name: result['company']['name'] ?? '',
@@ -60,86 +60,13 @@ class StockData {
       },
     );
 
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       return StockData.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load stock data');
     }
-  }
-}
-
-class StockDisplay extends StatelessWidget {
-  final StockData d;
-
-  const StockDisplay({required this.d, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    String name = d.name;
-    String logoUrl = d.logo;
-    String date = d.date;
-    String open = "Rp.${d.open.toStringAsFixed(2)}";
-    String high = "Rp.${d.high.toStringAsFixed(2)}";
-    String low = "Rp.${d.low.toStringAsFixed(2)}";
-    String close = "Rp.${d.close.toStringAsFixed(2)}";
-    String volume = d.volume.toString();
-    String change = "Rp.${d.change.toStringAsFixed(2)}";
-    String changePct = "${d.changePct.toStringAsFixed(2)}%";
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network(
-                  logoUrl,
-                  width: 50,
-                  height: 50,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Icon(Icons.error);
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 25,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text("Symbol: ${d.symbol}", style: const TextStyle(fontSize: 20)),
-          Text("Date: $date", style: const TextStyle(fontSize: 20)),
-          Text("Open: $open", style: const TextStyle(fontSize: 20)),
-          Text("High: $high", style: const TextStyle(fontSize: 20)),
-          Text("Low: $low", style: const TextStyle(fontSize: 20)),
-          Text("Close: $close", style: const TextStyle(fontSize: 20)),
-          Text("Volume: $volume", style: const TextStyle(fontSize: 20)),
-          Text("Change: $change", style: const TextStyle(fontSize: 20)),
-          Text(
-            "Change Percentage: $changePct",
-            style: TextStyle(
-              color: d.changePct > 0 ? Colors.green : Colors.red,
-              fontSize: 20,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

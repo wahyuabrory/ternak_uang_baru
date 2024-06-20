@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:login_ternak_uang/user/module_education_page.dart';
-import '../profile_screen.dart';
 import 'WatchlistPage.dart';
 import 'chat_screen.dart';
+import 'module_education_page.dart';
+import '../profile_screen.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -49,12 +49,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blueAccent, // Color of the selected item
-        unselectedItemColor: Colors.grey, // Color of the unselected items
-        backgroundColor: Colors.lightBlueAccent, // Light blue background color
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.lightBlueAccent,
         onTap: _onItemTapped,
-        selectedIconTheme:
-            IconThemeData(color: Colors.blueAccent), // Icon color when selected
+        selectedIconTheme: IconThemeData(color: Colors.blueAccent),
       ),
     );
   }

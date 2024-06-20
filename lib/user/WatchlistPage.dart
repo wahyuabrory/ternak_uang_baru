@@ -1,30 +1,40 @@
 import 'package:flutter/material.dart';
-import 'StockData.dart'; // Pastikan path ini sesuai dengan proyek Anda
+import 'StockData.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'stocks_card.dart';
 
 class WatchlistPage extends StatefulWidget {
   const WatchlistPage({super.key});
 
   @override
-  State<WatchlistPage> createState() => _WatchlistPage();
+  _WatchlistPageState createState() => _WatchlistPageState();
 }
 
-class _WatchlistPage extends State<WatchlistPage> {
-  List<StockData> stocks = List.empty(growable: true);
-  Future<StockData>? req;
-  late List<StockData> data;
-  late TextEditingController _controller;
-  late String symbol;
-  List<String>? stocksIncluded;
+class _WatchlistPageState extends State<WatchlistPage> {
+  TextEditingController _controller = TextEditingController();
+  List<String> stocksIncluded = [];
 
   @override
   void initState() {
     super.initState();
-    data = List.empty(growable: true);
-    req = StockData.fetchStockData("");
-    retrieveList();
-    symbol = "";
-    _controller = TextEditingController();
+    _loadWatchlist();
+  }
+
+  Future<void> _loadWatchlist() async {
+    stocksIncluded = await retrieveList();
+    setState(() {});
+  }
+
+  Future<List<String>> retrieveList() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    List<String>? stocksIncluded = pref.getStringList('data');
+    stocksIncluded ??= List.empty(growable: true);
+    return stocksIncluded.toSet().toList();
+  }
+
+  Future<void> saveList(List<String> stocksIncluded) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setStringList('data', stocksIncluded);
   }
 
   @override
@@ -32,20 +42,15 @@ class _WatchlistPage extends State<WatchlistPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Watchlist Market Stocks'),
-        backgroundColor:
-            Colors.lightBlueAccent, // Ubah warna latar belakang app bar
+        backgroundColor: Colors.lightBlueAccent,
         actions: [
           IconButton(
-            onPressed: () {
-              data.clear();
-              stocksIncluded!.clear();
-              symbol = "";
-              req = StockData.fetchStockData(symbol);
-              saveList();
+            onPressed: () async {
+              stocksIncluded.clear();
+              await saveList(stocksIncluded);
               setState(() {});
             },
-            icon: Icon(Icons.delete,
-                color: Colors.red), // Ubah warna ikon menjadi merah
+            icon: Icon(Icons.delete, color: Colors.red),
           ),
         ],
       ),
@@ -55,13 +60,29 @@ class _WatchlistPage extends State<WatchlistPage> {
             padding: const EdgeInsets.all(15),
             child: TextField(
               key: const ValueKey("searchBar"),
-              onEditingComplete: sendSearch,
               controller: _controller,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(15),
                 suffixIcon: TextButton(
-                  key: const ValueKey("searchButton"), // Untuk uji UI
-                  onPressed: sendSearch,
+                  key: const ValueKey("searchButton"),
+                  onPressed: () async {
+                    String symbol = _controller.text.toUpperCase();
+                    if (!stocksIncluded.contains(symbol)) {
+                      try {
+                        StockData stock =
+                            await StockData.fetchStockData(symbol);
+                        if (stock.symbol != "NONE") {
+                          stocksIncluded.add(symbol);
+                          await saveList(stocksIncluded);
+                          setState(() {});
+                        }
+                      } catch (e) {
+                        print("Error fetching stock data: $e");
+                      }
+                    }
+                    _controller.clear();
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
                   child: const Text('Add', style: TextStyle(fontSize: 20)),
                 ),
                 border: OutlineInputBorder(
@@ -70,105 +91,43 @@ class _WatchlistPage extends State<WatchlistPage> {
               ),
             ),
           ),
-          Expanded(child: stocksOutput()),
+          Expanded(
+            child: FutureBuilder<List<StockData>>(
+              future: Future.wait(stocksIncluded
+                  .map((symbol) => StockData.fetchStockData(symbol))
+                  .toList()),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasData) {
+                  List<StockData> data = snapshot.data!;
+                  return ReorderableListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return StockCard(
+                        key: ValueKey(index),
+                        stock: data[index],
+                      );
+                    },
+                    onReorder: (oldIndex, newIndex) async {
+                      if (oldIndex < newIndex) {
+                        newIndex--;
+                      }
+                      final String item = stocksIncluded.removeAt(oldIndex);
+                      stocksIncluded.insert(newIndex, item);
+                      await saveList(stocksIncluded);
+                      setState(() {});
+                    },
+                  );
+                } else {
+                  return Center(child: Text("No data available"));
+                }
+              },
+            ),
+          ),
         ],
       ),
     );
-  }
-
-  FutureBuilder<StockData> stocksOutput() {
-    return FutureBuilder<StockData>(
-      future: req,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasData) {
-          if (snapshot.data!.symbol != "NONE") {
-            if (!stocksIncluded!.contains(snapshot.data!.symbol)) {
-              data.add(snapshot.data!);
-              stocksIncluded!.add(snapshot.data!.symbol);
-              saveList();
-            }
-          }
-          return displayData();
-        } else {
-          return displayData();
-        }
-      },
-    );
-  }
-
-  Expanded displayData() {
-    return Expanded(
-      child: ReorderableListView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            tileColor: Colors.grey.shade200, // Ubah warna latar belakang tile
-            key: ValueKey(index),
-            contentPadding: const EdgeInsets.all(10),
-            title: Text(data[index].symbol),
-            subtitle: Text(data[index].name),
-            trailing: IconButton(
-              onPressed: () {
-                data.removeAt(index);
-                stocksIncluded!.removeAt(index);
-                symbol = "";
-                req = StockData.fetchStockData(symbol);
-                saveList();
-                setState(() {});
-              },
-              icon: Icon(Icons.remove,
-                  color: Colors.red), // Ubah warna ikon menjadi merah
-            ),
-          );
-        },
-        onReorder: (oldIndex, newIndex) {
-          if (oldIndex < newIndex) {
-            newIndex--;
-          }
-          final StockData d = data.removeAt(oldIndex);
-          final String n = stocksIncluded!.removeAt(oldIndex);
-
-          data.insert(newIndex, d);
-          stocksIncluded!.insert(newIndex, n);
-          symbol = "";
-          req = StockData.fetchStockData(symbol);
-          saveList();
-          setState(() {});
-        },
-      ),
-    );
-  }
-
-  void sendSearch() {
-    symbol = _controller.text.toUpperCase();
-    if (!stocksIncluded!.contains(symbol)) {
-      req = StockData.fetchStockData(symbol);
-
-      // Tutup keyboard saat menekan tombol "Add"
-      FocusManager.instance.primaryFocus?.unfocus();
-      setState(() {});
-    }
-
-    _controller.clear();
-  }
-
-  Future<void> saveList() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setStringList('data', stocksIncluded!);
-  }
-
-  Future<void> retrieveList() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    stocksIncluded = pref.getStringList('data');
-    stocksIncluded ??= List.empty(growable: true);
-    stocksIncluded = stocksIncluded!.toSet().toList();
-    for (int i = 0; i < stocksIncluded!.length; i++) {
-      symbol = stocksIncluded![i];
-      data.add(await StockData.fetchStockData(symbol));
-    }
-    setState(() {});
   }
 }
